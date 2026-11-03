@@ -1,0 +1,39 @@
+name: Docs MCP + Chain MCP Agent — verified composition
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Verify two functions, sourced Docs guard, ABI decoding and browser script
+        run: npm test
+      - name: Cloudflare bundle
+        run: npm run build
+  live-docs-chain-composition:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Developer Docs MCP → Pharos Chain MCP → Agent for 2 distinct functions
+        run: node scripts/smoke-deployed.mjs
+      - name: Save real two-MCP execution trace JSON
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pharos-docs-chain-mcp-agent-live-evidence
+          path: proof/ci-live-proof.json
+          if-no-files-found: error
+          retention-days: 30
