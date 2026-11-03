@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {Script} from 'node:vm';
 import {HTML} from '../src/page.mjs';
 test('Two selectable function scenarios, sourced explanations and proof export',()=>{
- for(const phrase of ['balanceOf(address)','totalSupply()','Developer Docs MCP','Chain MCP','Export JSON proof'])
+ for(const phrase of ['latestAnswer()','latestTimestamp()','Developer Docs MCP','Chain MCP','Export JSON proof'])
   assert.ok(HTML.includes(phrase),phrase);
 });
 test('browser script syntax is valid',()=>{

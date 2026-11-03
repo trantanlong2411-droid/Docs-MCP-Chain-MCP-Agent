@@ -19,7 +19,7 @@ for(let i=0;i<18;i++){
 }
 assert.equal(health?.chainId,1672,'Worker not yet ready');
 const result=[];
-for(const functionName of ['balanceOf','totalSupply']){
+for(const functionName of ['latestAnswer','latestTimestamp']){
  let flow,error;
  for(let tries=0;tries<3;tries++){
   try{flow=await api('/api/run',{functionName});break}
@@ -33,11 +33,15 @@ for(const functionName of ['balanceOf','totalSupply']){
  assert.equal(flow.sourceCrossCheck.sameFunction,true);
  assert.equal(flow.sourceCrossCheck.contractBytecodeVerified,true);
  assert.ok(flow.docs.explanation.includes(functionName));
+ assert.equal(flow.docs.provenance,'DEVELOPER_DOCS_MCP_GETPAGE');
+ assert.equal(flow.docs.sourceVerifiedByMcpFetch,true);
  assert.ok(flow.docs.sources.length>=1);
  assert.ok(flow.docs.sources.every(x=>new URL(x).hostname==='docs.pharos.xyz'));
+ assert.equal(flow.docs.sources[0],'https://docs.pharos.xyz/tooling-and-infrastructure/oracles/chainlink-pe');
  assert.equal(flow.call.chainId,1672);
- assert.match(flow.call.rawUint256,/^[0-9]+$/);
+ assert.match(flow.call.rawValue,/^[0-9]+$/);
  assert.ok(BigInt(flow.call.blockNumber)>0n);
+ assert.equal(flow.call.pair,'PROS/USD');
  assert.equal(flow.call.transactionBroadcast,false);
  assert.equal(flow.transactionBroadcast,false);
  assert.equal(flow.steps,7);
@@ -45,11 +49,11 @@ for(const functionName of ['balanceOf','totalSupply']){
   'Developer Docs MCP','Developer Docs MCP','Chain MCP','Chain MCP',
   'Chain MCP','Chain MCP','Agent interpreter'
  ]);
- assert.equal(flow.trace[5].arguments.transaction.data.startsWith(functionName==='balanceOf'?'0x70a08231':'0x18160ddd'),true);
+ assert.equal(flow.trace[5].arguments.transaction.data.length===10,true);
  assert.equal(flow.trace[1].functionSignature,flow.trace[5].functionSignature);
  result.push(flow);
  console.log('REAL DOCUMENTATION TO CONTRACT EXECUTION VERIFIED',JSON.stringify({
-  functionName,mainnetBlock:flow.call.blockNumber,raw:flow.call.rawUint256,
+  functionName,mainnetBlock:flow.call.blockNumber,raw:flow.call.rawValue,
   docsSourceCount:flow.docs.sources.length,sourceUrls:flow.docs.sources,
   toolOrder:flow.trace.map(x=>x.operation),broadcast:false}));
  await pause(2500);

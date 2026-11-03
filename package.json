@@ -1,6 +1,6 @@
 {
   "name": "pharos-docs-chain-mcp-agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,6 +10,9 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

@@ -1,4 +1,4 @@
-import {ENDPOINTS,createClient,buildDocsArgs,unwrap} from './mcp.mjs';
+import {ENDPOINTS,createClient,unwrap} from './mcp.mjs';
 import {validateRequest,parseDocsEvidence,decodeOnChain,compose} from './core.mjs';
 import {HTML} from './page.mjs';
 const json=(v,status=200)=>new Response(JSON.stringify(v),{status,
@@ -11,18 +11,11 @@ async function run(raw,fetcher=fetch){
   trace.push({step:1,component:'Developer Docs MCP',operation:'initialize',
    serverInfo:docs.serverInfo,endpoint:ENDPOINTS.docs});
   const tools=await docs.list();
-  const q=tools.find(x=>x.name==='askQuestion')||tools.find(x=>x.name==='searchDocumentation');
-  if(!q)throw Error('Developer Docs MCP has no allowed read-only search/question tool');
-  let reply=await docs.call(q.name,buildDocsArgs(q,request.question));
-  let found;
-  try{found=parseDocsEvidence(reply,request.signature)}catch(err){
-   const fallback=tools.find(x=>x.name==='searchDocumentation'&&x.name!==q.name);
-   if(!fallback)throw err;
-   reply=await docs.call(fallback.name,buildDocsArgs(fallback,request.question));
-   found=parseDocsEvidence(reply,request.signature);
-  }
-  trace.push({step:2,component:'Developer Docs MCP',operation:q.name,
-   query:request.question,explanation:found.explanation,sources:found.sources,
+  if(!tools.some(x=>x.name==='getPage'))throw Error('Developer Docs MCP has no getPage tool');
+  const reply=await docs.call('getPage',{url:request.docPage});
+  const found=parseDocsEvidence(reply,request);
+  trace.push({step:2,component:'Developer Docs MCP',operation:'getPage',
+   query:request.docPage,explanation:found.explanation,sources:found.sources,
    functionSignature:found.functionSignature});
   // Crucial gate: Chain MCP is NEVER invoked without a sourced Docs MCP explanation
   chain=await createClient(ENDPOINTS.chain,'Chain',fetcher);
@@ -46,11 +39,11 @@ async function run(raw,fetcher=fetch){
   const output=unwrap(await chain.call('eth_call',arg),'eth_call');
   const view=decodeOnChain(request,code,output,chainInfo);
   trace.push({step:6,component:'Chain MCP',operation:'eth_call',
-   arguments:arg,result:output,decoded:view.rawUint256,functionSignature:request.signature});
+   arguments:arg,result:output,decoded:view.rawValue,functionSignature:request.signature});
   trace.push({step:7,component:'Agent interpreter',operation:'explain-and-interpret',
    dependsOn:[2,4,5,6],explanationFromDocs:found.functionSignature,
    result:view.interpretation});
-  return compose(request,found,chainInfo,code,view,trace);
+  return compose(request,found,view,trace);
  }catch(e){
   const err=Error(String(e.message||e).slice(0,450));err.trace=trace;throw err;
  }finally{
