@@ -27,6 +27,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Diagnose official Docs MCP schemas and actual source answers
+        run: node scripts/probe-docs.mjs
       - name: Developer Docs MCP → Pharos Chain MCP → Agent for 2 distinct functions
         run: node scripts/smoke-deployed.mjs
       - name: Save real two-MCP execution trace JSON
