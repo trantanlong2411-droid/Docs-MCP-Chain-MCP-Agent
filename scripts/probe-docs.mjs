@@ -29,3 +29,12 @@ for(const url of ['https://docs.pharos.xyz/llms.txt','https://docs.pharos.xyz/ll
    'relevantLinks',JSON.stringify(lines.slice(0,70)).slice(0,10500));
  }catch(e){console.log('DOCS INDEX DIAGNOSTIC ERROR',url,e.message)}
 }
+
+try{
+ const text=(await (await fetch('https://docs.pharos.xyz/llms.txt',{signal:AbortSignal.timeout(12000)})).text());
+ console.log('OFFICIAL DOCS ORACLE INDEX LINKS',JSON.stringify(text.split('\n').filter(x=>/chainlink|oracle|price feed|data feed|token registry/i.test(x))).slice(0,10500));
+ const full=(await (await fetch('https://docs.pharos.xyz/llms-full.txt',{signal:AbortSignal.timeout(16000)})).text());
+ for(const term of ['latestAnswer()', 'Each price pair has a dedicated proxy contract', '## Pacific Mainnet Contracts']){
+  const i=full.indexOf(term);console.log('OFFICIAL DOCS CONTEXT '+term,full.slice(Math.max(0,i-1900),i+3400).slice(0,5700));
+ }
+}catch(e){console.log('OFFICIAL DOCS CONTEXT ERROR',e.message)}
