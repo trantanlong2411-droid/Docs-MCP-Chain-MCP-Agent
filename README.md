@@ -2,6 +2,12 @@
 
 [Public Cloudflare Worker](https://docs-mcp-chain-mcp-agent.trantanlong2411.workers.dev/) · [Source repository](https://github.com/trantanlong2411-droid/Docs-MCP-Chain-MCP-Agent)
 
+## Verified real two-MCP execution evidence
+
+- [Read-only live composition proof](./proof/README.md): both `latestAnswer()` and `latestTimestamp()` were documented by **Developer Docs MCP getPage**, called via **Chain MCP eth_call**, and interpreted at Pharos Mainnet blocks 21996060 and 21996066.
+- [GitHub Actions run 41599646783](https://github.com/trantanlong2411-droid/Docs-MCP-Chain-MCP-Agent/actions/runs/41599646783): all 9/9 tests, Cloudflare Worker build, and two live MCP sequences succeeded.
+- Download the full `pharos-docs-chain-mcp-agent-live-evidence` JSON artifact from that workflow run.
+
 ## What this agent really does
 
 From **one browser request**, the Worker first calls the official **Pharos Developer Docs MCP** at `https://docs.pharos.xyz/~gitbook/mcp`, retrieves the official [Chainlink Push Engine Feeds](https://docs.pharos.xyz/tooling-and-infrastructure/oracles/chainlink-pe) page with its working `getPage` tool, validates that the page documents the requested on-chain function, return ABI type and PROS/USD mainnet contract. It then starts a separate **Pharos Chain MCP** session to check the live network, verify deployed code, invoke the **same** function by `eth_call` and interpret the result using the original Docs MCP explanation.

@@ -1,0 +1,61 @@
+{
+  "schema": "pharos-docs-chain-mcp-proof-summary-v1",
+  "verifiedAt": "2026-11-03",
+  "verifiedBy": "GitHub Actions 41599646783, deployed Cloudflare Worker, real external MCP servers",
+  "githubRun": "https://github.com/trantanlong2411-droid/Docs-MCP-Chain-MCP-Agent/actions/runs/41599646783",
+  "website": "https://docs-mcp-chain-mcp-agent.trantanlong2411.workers.dev/",
+  "docsMcp": {
+    "endpoint": "https://docs.pharos.xyz/~gitbook/mcp",
+    "tool": "getPage",
+    "source": "https://docs.pharos.xyz/tooling-and-infrastructure/oracles/chainlink-pe"
+  },
+  "chainMcp": {
+    "endpoint": "https://mcp.pharos.xyz/mcp",
+    "network": "Pharos Mainnet",
+    "chainId": 1672,
+    "tools": [
+      "get_chain_info",
+      "get_code",
+      "eth_call"
+    ]
+  },
+  "proxy": {
+    "pair": "PROS/USD",
+    "address": "0x371Ed36aEe5bFFbED1A2aa9b7deD7F4EB30F5466"
+  },
+  "testResults": [
+    {
+      "functionName": "latestAnswer",
+      "signature": "latestAnswer()",
+      "returnType": "int256",
+      "block": "21996060",
+      "raw": "506807395438360200",
+      "decimalPlaces": 18,
+      "observedPriceUSD": "0.5068073954383602"
+    },
+    {
+      "functionName": "latestTimestamp",
+      "signature": "latestTimestamp()",
+      "returnType": "uint256",
+      "block": "21996066",
+      "raw": "1793692029"
+    }
+  ],
+  "steps": [
+    "Docs MCP initialize",
+    "Docs MCP getPage",
+    "Chain MCP initialize",
+    "Chain MCP get_chain_info",
+    "Chain MCP get_code",
+    "Chain MCP eth_call",
+    "Agent interpretation"
+  ],
+  "tests": {
+    "passed": 9,
+    "failed": 0,
+    "cloudflareBuild": "success",
+    "liveIntegration": "success"
+  },
+  "signedTransactions": 0,
+  "caveat": "This is a read-only oracle observation, not a transaction, trade recommendation or assurance of price feed freshness. This summary is transcribed from CI logs; the full raw MCP responses are retained in the CI artifact."
+}

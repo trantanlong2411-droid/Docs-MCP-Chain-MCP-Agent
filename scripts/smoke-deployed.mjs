@@ -39,7 +39,7 @@ for(const functionName of ['latestAnswer','latestTimestamp']){
  assert.ok(flow.docs.sources.every(x=>new URL(x).hostname==='docs.pharos.xyz'));
  assert.equal(flow.docs.sources[0],'https://docs.pharos.xyz/tooling-and-infrastructure/oracles/chainlink-pe');
  assert.equal(flow.call.chainId,1672);
- assert.match(flow.call.rawValue,/^[0-9]+$/);
+ assert.match(flow.call.rawValue,/^-?[0-9]+$/);
  assert.ok(BigInt(flow.call.blockNumber)>0n);
  assert.equal(flow.call.pair,'PROS/USD');
  assert.equal(flow.call.transactionBroadcast,false);
@@ -63,4 +63,4 @@ await writeFile('proof/ci-live-proof.json',JSON.stringify({
  schema:'pharos-docs-chain-composition-v1',testedAt:new Date().toISOString(),
  website:base,scope:'Real Developer Docs MCP sources and real Pharos Chain MCP mainnet eth_call; no transactions',
  flows:result},null,2)+'\n');
-console.log('ALL LIVE TWO-MCP COMPOSITION PROOFS PASS — two distinct ERC20 methods');
+console.log('ALL LIVE TWO-MCP COMPOSITION PROOFS PASS — two distinct documented oracle functions');
