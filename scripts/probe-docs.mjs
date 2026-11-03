@@ -17,3 +17,15 @@ try{
   }
  }
 }finally{await client.close()}
+
+
+// Public GitBook index diagnostic, not used as a substitute for Docs MCP in the agent.
+for(const url of ['https://docs.pharos.xyz/llms.txt','https://docs.pharos.xyz/llms-full.txt']){
+ try{
+  const response=await fetch(url,{signal:AbortSignal.timeout(12000)});
+  const content=(await response.text()).slice(0,1200000);
+  const lines=content.split('\n').filter(x=>/\berc.?20\b|balanceOf|totalSupply|token standard|contract|smart contract/i.test(x));
+  console.log('DOCS INDEX DIAGNOSTIC',url,'http',response.status,'textSize',content.length,
+   'relevantLinks',JSON.stringify(lines.slice(0,70)).slice(0,10500));
+ }catch(e){console.log('DOCS INDEX DIAGNOSTIC ERROR',url,e.message)}
+}
